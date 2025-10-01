@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MIND VISTA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -1324,19 +1324,21 @@
             /* Optimize for mobile performance */
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
-            /* Enable touch scrolling */
+            /* Prevent zoom and scaling issues */
+            touch-action: manipulation;
+            /* Enable proper scrolling */
             -webkit-overflow-scrolling: touch;
-            overflow: auto;
-            /* Prevent horizontal overflow */
-            overflow-x: hidden;
+            overflow: hidden;
+            /* Ensure full viewport usage */
             max-width: 100vw;
+            max-height: 100vh;
         }
 
         .pdf-modal-content {
             position: relative;
             background: rgba(30, 30, 30, 0.95);
             margin: 2% auto;
-            padding: 20px;
+            padding: 15px;
             width: 90%;
             height: 90%;
             border-radius: 12px;
@@ -1348,9 +1350,12 @@
             /* Optimize for mobile performance */
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
-            /* Prevent horizontal overflow */
+            /* Prevent horizontal overflow and scaling */
             max-width: calc(100vw - 4%);
+            max-height: calc(100vh - 4%);
             overflow: hidden;
+            /* Better mobile containment */
+            box-sizing: border-box;
         }
 
         .pdf-modal-header {
@@ -1391,41 +1396,39 @@
             flex-direction: column;
             background: var(--bg-color);
             border-radius: 8px;
-            overflow: auto;
+            overflow: hidden;
             border: 1px solid var(--border-color);
             /* Ensure proper sizing on mobile */
             min-height: 300px;
             position: relative;
-            /* Enhanced mobile scrolling */
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
-            /* Prevent horizontal overflow */
-            overflow-x: hidden;
+            /* Better mobile containment */
             width: 100%;
             max-width: 100%;
+            box-sizing: border-box;
         }
 
         .pdf-viewer-iframe {
             width: 100%;
             height: 100%;
             border: none;
-            /* Mobile-specific optimizations */
-            -webkit-overflow-scrolling: touch;
-            overflow: auto;
-            /* Ensure iframe is properly sized */
+            /* Remove any transforms that could cause scaling */
+            transform: none !important;
+            transform-origin: top left;
+            /* Prevent overscaling and zooming issues */
+            touch-action: manipulation;
+            /* Better mobile PDF rendering - no scaling */
+            max-width: 100%;
+            min-width: 100%;
+            box-sizing: border-box;
+            /* Position properly within container */
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            /* Prevent overscaling on mobile */
-            transform: none;
-            transform-origin: top left;
-            /* Enhanced touch support */
-            touch-action: pan-x pan-y zoom-in-out;
-            /* Better mobile PDF rendering */
-            max-width: 100%;
-            box-sizing: border-box;
+            /* Ensure iframe content fits properly */
+            object-fit: contain;
+            overflow: hidden;
         }
 
         /* Mobile-specific PDF viewer optimization */
@@ -1867,21 +1870,24 @@
             }
             
             .pdf-modal-content {
-                width: 98%;
-                height: 95%;
-                padding: 10px;
-                margin: 1%;
+                width: 95%;
+                height: 92%;
+                padding: 8px;
+                margin: 2.5%;
                 background: rgba(30, 30, 30, 0.98);
-                /* Ensure proper mobile display */
-                min-height: 0;
-                overflow: auto;
-                /* Enhanced mobile scrolling */
-                -webkit-overflow-scrolling: touch;
-                scroll-behavior: smooth;
-                /* Prevent horizontal overflow */
-                max-width: calc(100vw - 2%);
-                overflow-x: hidden;
+                /* Better mobile sizing */
+                min-height: calc(100vh - 20px);
+                max-height: calc(100vh - 20px);
+                overflow: hidden;
+                /* Prevent any scaling or overflow issues */
+                max-width: calc(100vw - 10px);
+                min-width: calc(100vw - 10px);
                 box-sizing: border-box;
+                /* Center perfectly on screen */
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
             
             .pdf-modal-header {
@@ -2071,46 +2077,55 @@
                 border-radius: 0;
                 background: rgba(30, 30, 30, 1);
                 border: none;
-                /* Ensure full utilization of screen space */
+                /* Full screen utilization without overscaling */
                 min-height: 100vh;
                 max-height: 100vh;
-                overflow: auto;
-                /* Enhanced mobile scrolling */
-                -webkit-overflow-scrolling: touch;
-                scroll-behavior: smooth;
-                /* Better mobile performance */
-                will-change: scroll-position;
+                overflow: hidden;
+                /* Prevent any scaling or performance issues */
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                transform: none;
+                box-sizing: border-box;
             }
             
             .pdf-viewer-container {
-                height: calc(100vh - 140px);
-                min-height: calc(100vh - 140px);
-                overflow: auto;
-                /* Enhanced mobile scrolling */
-                -webkit-overflow-scrolling: touch;
-                scroll-behavior: smooth;
-                /* Better touch interactions */
-                touch-action: pan-x pan-y zoom-in-out;
-                /* Prevent horizontal overflow */
-                overflow-x: hidden;
+                height: calc(100% - 100px);
+                min-height: calc(100% - 100px);
+                overflow: hidden;
+                /* No touch actions that could interfere */
+                touch-action: manipulation;
+                /* Prevent any overflow */
                 width: 100%;
                 max-width: 100%;
+                box-sizing: border-box;
+                /* Better positioning */
+                position: relative;
             }
             
             .pdf-viewer-iframe {
-                /* Very small mobile screens - responsive sizing */
+                /* Proper mobile iframe sizing - no overscaling */
                 width: 100%;
-                min-height: 100%;
                 height: 100%;
-                /* Optimize for very small screens - no scaling */
-                transform: none;
+                min-height: 100%;
+                /* Remove any transforms that cause scaling */
+                transform: none !important;
                 transform-origin: top left;
-                /* Enhanced touch support */
-                touch-action: pan-x pan-y zoom-in-out;
-                /* Better containment for small screens */
+                /* Prevent zoom and scaling issues */
+                touch-action: manipulation;
+                /* Proper containment */
                 max-width: 100%;
-                overflow: auto;
+                min-width: 100%;
+                overflow: hidden;
                 box-sizing: border-box;
+                /* Better positioning */
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
             }
             
             .pdf-modal-header {
@@ -2200,19 +2215,68 @@
                 /* Better mobile backdrop */
                 background: rgba(0, 0, 0, 0.95);
                 backdrop-filter: blur(2px);
+                /* Prevent zooming and scaling */
+                touch-action: manipulation;
+                /* Ensure proper viewport */
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                max-width: 100vw;
+                max-height: 100vh;
+            }
+            
+            .pdf-modal-content {
+                /* Optimize modal for mobile - prevent overscaling */
+                width: 96%;
+                height: 94%;
+                margin: 2%;
+                padding: 8px;
+                /* Remove transforms that could cause scaling */
+                transform: none !important;
+                /* Better mobile positioning */
+                position: absolute;
+                top: 2%;
+                left: 2%;
+                /* Prevent any scaling or overflow issues */
+                max-width: calc(100vw - 4%);
+                max-height: calc(100vh - 4%);
+                overflow: hidden;
+                box-sizing: border-box;
             }
             
             .pdf-viewer-container {
                 /* Improved mobile scrolling performance */
                 will-change: scroll-position;
                 contain: layout style paint;
+                /* Better sizing for mobile */
+                height: calc(100% - 80px);
+                min-height: calc(100% - 80px);
+                /* Prevent any overflow that could cause scaling */
+                overflow: hidden;
+                touch-action: manipulation;
             }
             
             .pdf-viewer-iframe {
-                /* Better mobile iframe handling */
+                /* Better mobile iframe handling - no overscaling */
                 pointer-events: auto;
-                -webkit-transform: translateZ(0);
-                transform: translateZ(0);
+                -webkit-transform: none !important;
+                transform: none !important;
+                /* Proper mobile sizing */
+                width: 100%;
+                height: 100%;
+                /* Prevent any zoom or scale issues */
+                zoom: 1 !important;
+                scale: 1 !important;
+                /* Better mobile containment */
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                max-width: 100%;
+                max-height: 100%;
             }
         }
         
@@ -2221,12 +2285,46 @@
             .pdf-modal {
                 background: rgba(0, 0, 0, 1);
                 backdrop-filter: none;
+                /* Full screen utilization */
+                width: 100vw;
+                height: 100vh;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .pdf-modal-content {
+                /* Full screen for very small devices */
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                border-radius: 0;
+                /* No transforms to prevent scaling */
+                transform: none !important;
+                /* Position absolutely to prevent any overflow */
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
             }
             
             .pdf-viewer-iframe {
-                /* Optimize for very small screens */
+                /* Optimize for very small screens - prevent overscaling */
                 image-rendering: optimizeSpeed;
                 image-rendering: -webkit-optimize-contrast;
+                /* No scaling or transforms */
+                transform: none !important;
+                -webkit-transform: none !important;
+                zoom: 1 !important;
+                scale: 1 !important;
+                /* Perfect fit for small screens */
+                width: 100%;
+                height: 100%;
+                max-width: 100%;
+                max-height: 100%;
+                /* Remove any touch actions that could cause scaling */
+                touch-action: manipulation;
             }
         }
         
