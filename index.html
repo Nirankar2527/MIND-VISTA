@@ -1314,7 +1314,7 @@
             background: var(--secondary);
         }
 
-        /* PDF Viewer Modal - Mobile-Optimized Styles */
+        /* PDF Viewer Modal - Mobile-Optimized Styles with Fixed Z-Index */
         .pdf-modal {
             display: none;
             position: fixed;
@@ -1323,7 +1323,7 @@
             width: 100%;
             height: 100%;
             background: rgba(18, 18, 18, 0.95);
-            z-index: 1000;
+            z-index: 10000; /* Increased z-index to ensure visibility */
             backdrop-filter: blur(8px);
             animation: fadeIn 0.3s ease;
             /* Optimize for mobile performance */
@@ -1356,6 +1356,8 @@
             /* Prevent horizontal overflow */
             max-width: calc(100vw - 4%);
             overflow: hidden;
+            /* Ensure proper z-index stacking */
+            z-index: 10001;
         }
 
         .pdf-modal-header {
@@ -1550,6 +1552,18 @@
         @keyframes slideUp {
             from { transform: translateY(30px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Smooth fade-in animation for PDF modal to prevent glitches */
+        @keyframes smoothFadeIn {
+            from { 
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to { 
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
         }
 
         /* Enhanced Responsive Design */
@@ -1872,21 +1886,33 @@
             }
             
             .pdf-modal-content {
-                width: 98%;
-                height: 95%;
-                padding: 10px;
-                margin: 1%;
+                /* Smooth centered mobile modal - no glitches */
+                width: 88%;
+                height: 88%;
+                padding: 8px;
                 background: rgba(30, 30, 30, 0.98);
-                /* Ensure proper mobile display */
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                /* Ensure proper mobile display with higher z-index */
                 min-height: 0;
                 overflow: auto;
                 /* Enhanced mobile scrolling */
                 -webkit-overflow-scrolling: touch;
                 scroll-behavior: smooth;
                 /* Prevent horizontal overflow */
-                max-width: calc(100vw - 2%);
+                max-width: calc(100vw - 12%);
                 overflow-x: hidden;
                 box-sizing: border-box;
+                /* Fix z-index stacking issue */
+                z-index: 10001;
+                /* Smooth centering without glitches */
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                /* Ensure smooth appearance */
+                opacity: 0;
+                animation: smoothFadeIn 0.3s ease forwards;
             }
             
             .pdf-modal-header {
@@ -1896,11 +1922,11 @@
                 gap: 10px;
                 border-bottom: 1px solid var(--border-color);
                 flex-shrink: 0;
-                padding: 10px;
+                padding: 12px;
                 position: sticky;
                 top: 0;
                 background: rgba(30, 30, 30, 0.98);
-                z-index: 10;
+                z-index: 10002; /* Higher z-index to ensure visibility */
             }
             
             .pdf-modal-title {
@@ -1924,8 +1950,9 @@
             }
             
             .pdf-viewer-container {
-                min-height: 60vh;
-                height: calc(100vh - 200px);
+                /* Reduced size mobile container */
+                min-height: 55vh;
+                height: calc(100vh - 220px);
                 overflow: auto;
                 /* Enhanced mobile scrolling */
                 -webkit-overflow-scrolling: touch;
@@ -1936,6 +1963,9 @@
                 overflow-x: hidden;
                 width: 100%;
                 max-width: 100%;
+                /* Ensure proper layering */
+                z-index: 10001;
+                position: relative;
             }
             
             .pdf-viewer-iframe {
@@ -1954,21 +1984,48 @@
             }
             
             .pdf-viewer-controls {
+                /* Enhanced button styling per user preference - ALWAYS VISIBLE */
                 flex-direction: column;
-                gap: 10px;
-                padding: 10px;
-                background: var(--card-bg);
+                gap: 12px;
+                padding: 15px;
+                background: rgba(30, 30, 30, 0.98);
                 border-top: 1px solid var(--border-color);
                 flex-shrink: 0;
                 position: sticky;
                 bottom: 0;
+                /* Ensure button is always visible with high z-index */
+                z-index: 10003;
             }
             
             .pdf-viewer-btn {
+                /* Enhanced button styling per user preference - larger with OG cyan color */
                 width: 100%;
                 justify-content: center;
-                min-height: 44px;
+                min-height: 48px;
+                padding: 14px 24px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                background: #09a8b3; /* Original cyan color per user preference */
+                color: white;
+                border: none;
+                border-radius: 10px;
+                gap: 10px;
                 touch-action: manipulation;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(9, 168, 179, 0.3);
+                /* Ensure button is always clickable */
+                pointer-events: auto;
+                position: relative;
+                z-index: 10004;
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+            }
+            
+            .pdf-viewer-btn:hover, .pdf-viewer-btn:active {
+                background: #0891a0; /* Slightly darker accent per user preference */
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(9, 168, 179, 0.4);
             }
             
             .pdf-fallback-actions {
@@ -2070,26 +2127,37 @@
             }
             
             .pdf-modal-content {
-                margin: 0;
-                width: 100%;
-                height: 100%;
-                border-radius: 0;
+                /* Smooth centered for very small screens - no glitches */
+                width: 96%;
+                height: 94%;
+                padding: 8px;
                 background: rgba(30, 30, 30, 1);
-                border: none;
-                /* Ensure full utilization of screen space */
-                min-height: 100vh;
-                max-height: 100vh;
+                border-radius: 6px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                /* Ensure proper mobile display */
+                min-height: 0;
+                max-height: 94vh;
                 overflow: auto;
                 /* Enhanced mobile scrolling */
                 -webkit-overflow-scrolling: touch;
                 scroll-behavior: smooth;
                 /* Better mobile performance */
                 will-change: scroll-position;
+                z-index: 10001;
+                /* Smooth centering without teleporting */
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                /* Ensure smooth appearance */
+                opacity: 0;
+                animation: smoothFadeIn 0.3s ease forwards;
             }
             
             .pdf-viewer-container {
-                height: calc(100vh - 140px);
-                min-height: calc(100vh - 140px);
+                /* Smaller container for very small screens */
+                height: calc(100vh - 160px);
+                min-height: calc(100vh - 160px);
                 overflow: auto;
                 /* Enhanced mobile scrolling */
                 -webkit-overflow-scrolling: touch;
@@ -2100,6 +2168,9 @@
                 overflow-x: hidden;
                 width: 100%;
                 max-width: 100%;
+                z-index: 10001;
+                margin: 4px;
+                border-radius: 4px;
             }
             
             .pdf-viewer-iframe {
@@ -2119,19 +2190,21 @@
             }
             
             .pdf-modal-header {
-                padding: 10px;
+                padding: 12px;
                 border-bottom: 1px solid var(--border-color);
                 position: sticky;
                 top: 0;
                 background: rgba(30, 30, 30, 1);
-                z-index: 10;
+                z-index: 10002; /* High z-index for visibility */
             }
             
             .pdf-viewer-controls {
-                padding: 8px;
+                padding: 12px;
                 position: sticky;
                 bottom: 0;
                 background: rgba(30, 30, 30, 1);
+                border-top: 1px solid var(--border-color);
+                z-index: 10003; /* High z-index to ensure always visible */
             }
         }
         
