@@ -39,6 +39,9 @@
         
         html {
             -webkit-text-size-adjust: 100%; /* Prevent text scaling on iOS */
+            scroll-behavior: smooth; /* Ensure smooth scrolling for all elements */
+            /* Optimize scroll performance on mobile */
+            -webkit-overflow-scrolling: touch;
         }
 
         body {
@@ -57,6 +60,8 @@
             -webkit-overflow-scrolling: touch;
             /* Prevent horizontal scrolling */
             max-width: 100vw;
+            /* Manual scroll restoration for mobile compatibility */
+            overscroll-behavior: contain;
         }
         
 
@@ -3178,7 +3183,19 @@
                     <div class="progress-text">Completed: ${progress}%</div>
                 `;
                 
-                card.addEventListener('click', () => showChapters(subjectId));
+                card.addEventListener('click', () => {
+                    // Scroll to top first (manual scroll restoration for mobile compatibility)
+                    window.scrollTo({
+                        top: 0,
+                        left: 0,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Small delay to ensure smooth scroll completes before content change
+                    setTimeout(() => {
+                        showChapters(subjectId);
+                    }, 100);
+                });
                 container.appendChild(card);
             }
         }
@@ -3230,11 +3247,22 @@
                 searchTimeout = setTimeout(() => searchChapters(e), 300); // 300ms debounce
             });
             
+            // Hide other sections and show chapters
             document.getElementById('welcomeSection').style.display = 'none';
             document.getElementById('subjectsContainer').style.display = 'none';
             document.getElementById('chaptersContainer').style.display = 'block';
             document.getElementById('aboutContainer').style.display = 'none';
             document.getElementById('supportContainer').style.display = 'none';
+            
+            // Ensure page loads at the top with manual scroll restoration for mobile compatibility
+            // This prevents landing at incorrect scroll positions due to previous page state
+            setTimeout(() => {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'auto' // Use auto for immediate positioning after content change
+                });
+            }, 50);
         }
 
         // Search chapters function
